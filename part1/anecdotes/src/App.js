@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Button from "./components/Button";
 
 const App = () => {
   const anecdotes = [
@@ -12,6 +13,7 @@ const App = () => {
   ];
 
   const [selected, setSelected] = useState(0);
+  const [mostVoted, setMostVoted] = useState(0);
   const [points, setPoints] = useState(new Array(anecdotes.length).fill(0));
 
   const generateRandomNumber = (min, max) =>
@@ -26,14 +28,29 @@ const App = () => {
     const newPoints = [...points];
     newPoints[selected] = newPoints[selected] + 1;
     setPoints(newPoints);
+    handleMostVoted(newPoints);
+  };
+
+  const handleMostVoted = (points) => {
+    console.log(Math.max(...points));
+    const newMostVoted = points.indexOf(Math.max(...points));
+    setMostVoted(newMostVoted);
   };
 
   return (
     <div>
-      <p>{anecdotes[selected]}</p>
-      <p>has {points[selected]} votes</p>
-      <button onClick={handleClick}>next anecdote</button>
-      <button onClick={handleVote}>vote</button>
+      <section>
+        <h1>Anecdote of the day</h1>
+        <p>{anecdotes[selected]}</p>
+        <p>has {points[selected]} votes</p>
+        <Button handleClick={handleClick} text={"next anecdote"} />
+        <Button handleClick={handleVote} text={"vote"} />
+      </section>
+      <section>
+        <h1>Most Voted</h1>
+        <p>{anecdotes[mostVoted]}</p>
+        <p>has {points[mostVoted]} votes</p>
+      </section>
     </div>
   );
 };
