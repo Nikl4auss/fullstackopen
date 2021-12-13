@@ -1,14 +1,10 @@
-import { useState } from "react";
+import axios from "axios";
+import { useState, useEffect } from "react";
 import AddContact from "./components/AddContact";
 import Filter from "./components/Filter";
 import Numbers from "./components/Numbers";
 const App = () => {
-  const [persons, setPersons] = useState([
-    { name: "Arto Hellas", number: "040-123456", id: 1 },
-    { name: "Ada Lovelace", number: "39-44-5323523", id: 2 },
-    { name: "Dan Abramov", number: "12-43-234345", id: 3 },
-    { name: "Mary Poppendieck", number: "39-23-6423122", id: 4 },
-  ]);
+  const [persons, setPersons] = useState([]);
   const [filteredPersons, setFilteredPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
@@ -44,6 +40,11 @@ const App = () => {
   const personsToShow =
     filteredPersons.length === 0 ? persons : filteredPersons;
 
+
+  useEffect(async () => {
+    const response = await axios.get("http://localhost:3001/persons")
+    setPersons(response.data)
+  }, [])
   return (
     <div>
       <h1>Phonebook</h1>
