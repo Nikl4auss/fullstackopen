@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react"
 import axios from 'axios'
+import Countries from "./components/Countries"
+import Country from "./components/Country"
 const App = () => {
   const [countries, setCountries] = useState([])
   const [filteredCountries, setFilteredCountries] = useState([])
@@ -33,22 +35,14 @@ const App = () => {
         </label>
       </div>
       <div>
-        {filteredCountries.length > 1 
+        {filteredCountries.length === 0
+        ? null 
+        : filteredCountries.length > 10 
         ? <p>Too many matches, specify another filter</p> 
-        : filteredCountries.map(country => {
-          return (
-            <div>
-              <p><strong>{country.name.common}</strong></p>
-              <p>capital {country.capital[0]}</p>
-              <p>population {country.population}</p>
-              <p><strong>languages</strong></p>
-              <ul>
-                {Object.values(country.languages).map((language, i) => <li key={i}>{language}</li>)}
-              </ul>
-              <img src={country.flags.png} alt="country flag" />
-            </div>
-          )
-        })}
+        : filteredCountries.length > 1
+        ? <Countries countries={filteredCountries}/>
+        : <Country showButton={false} country={filteredCountries[0]} />
+        }
       </div>
     </>
   )
