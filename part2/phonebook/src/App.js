@@ -1,8 +1,9 @@
-import axios from "axios";
 import { useState, useEffect } from "react";
 import AddContact from "./components/AddContact";
 import Filter from "./components/Filter";
 import Numbers from "./components/Numbers";
+import personsServices from "./services/persons"
+
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [filteredPersons, setFilteredPersons] = useState([]);
@@ -20,39 +21,85 @@ const App = () => {
     setFilteredPersons(newFilteredPersons);
   };
 
-  const addContact = (event) => {
-    event.preventDefault();
+  const addContact = () => {
     const newContact = {
       name: newName,
       number: newNumber,
-      id: persons.length + 1,
     };
 
     if (persons.some((person) => person.name === newContact.name)) {
       window.alert(`${newName} is already added to the phonebook`);
     } else {
-      setPersons(persons.concat(newContact));
+      personsServices
+      .add(newContact)
+      .then(returnContact => setPersons(persons.concat(returnContact)))
     }
     setNewName("");
     setNewNumber("");
   };
 
+  const updateContact = (contactToUpdate) => {
+    const updatedContact = {
+      ...contactToUpdate,
+      number: newNumber
+    }
+
+    personsServices
+    .update(updatedContact, contactToUpdate.id)
+    .then(response => {
+      setPersons(persons.map(contact => contact.id !== contactToUpdate.id ? contact : response))
+    })
+  }
+
+  const removeContact = (name, id) => {
+    if(window.confirm(`You want to delete ${name}?`)){
+      personsServices
+      .remove(id)
+      .then(result =>
+        {
+        personsServices
+        .getAll()
+        .then(returnedPersons => setPersons(returnedPersons)) 
+        window.alert('Contact Deleted')
+        }
+        )
+    }
+  }
+
+  const handleNewContacts = (event) => {
+    event.preventDefault()
+    const contactToUpdate = persons.find(person => person.name === newName)
+    if(contactToUpdate){
+      if(window.confirm(`${contactToUpdate.name} is already on your phonebook, you want to update the old number with this new one?`)){
+        updateContact(contactToUpdate)
+      }
+      else{
+        window.alert("Update aborted")
+      }
+    }
+    else {
+      addContact()
+    }
+  }
+
   const personsToShow =
     filteredPersons.length === 0 ? persons : filteredPersons;
 
 
-  useEffect(async () => {
-    const response = await axios.get("http://localhost:3001/persons")
-    setPersons(response.data)
+  useEffect( () => {
+    personsServices
+    .getAll()
+    .then(initialPersons => setPersons(initialPersons))
+    .catch(error => console.log("fail", error))
   }, [])
   return (
     <div>
       <h1>Phonebook</h1>
       <Filter filterText={filterText} handleFilter={handleFilter} />
 
-      <AddContact newName={newName} handleNameChange={handleNameChange} newNumber={newNumber} handleNumberChange={handleNumberChange} addContact={addContact}/>
+      <AddContact newName={newName} handleNameChange={handleNameChange} newNumber={newNumber} handleNumberChange={handleNumberChange} handleNewContacts={handleNewContacts}/>
 
-      <Numbers personsToShow={personsToShow} />
+      <Numbers personsToShow={personsToShow} removeContact={removeContact}/>
     </div>
   );
 };

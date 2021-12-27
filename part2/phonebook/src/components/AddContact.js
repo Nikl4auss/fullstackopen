@@ -1,8 +1,8 @@
-const AddContact = ({newName, handleNameChange, newNumber, handleNumberChange, addContact}) => {
+const AddContact = ({newName, handleNameChange, newNumber, handleNumberChange, handleNewContacts}) => {
     return (
         <>
         <h2>Add a new Contact</h2>
-        <form onSubmit={addContact}>
+        <form onSubmit={handleNewContacts}>
             <label htmlFor="name">
                 Name:
                 <input id="name" value={newName} onChange={handleNameChange} />
