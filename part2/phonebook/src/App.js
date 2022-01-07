@@ -3,13 +3,16 @@ import AddContact from "./components/AddContact";
 import Filter from "./components/Filter";
 import Numbers from "./components/Numbers";
 import personsServices from "./services/persons"
-
+import Notification from "./components/Notification";
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [filteredPersons, setFilteredPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [filterText, setFilterText] = useState("");
+  const [notificationMessage, setNotificationMessage] = useState(null)
+  const [notificationID, setNotificationID] = useState(null)
+  const [notificationClass, setNotificationClass] = useState(null)
   const handleNameChange = (event) => setNewName(event.target.value);
   const handleNumberChange = (event) => setNewNumber(event.target.value);
   const handleFilter = (event) => {
@@ -27,15 +30,24 @@ const App = () => {
       number: newNumber,
     };
 
-    if (persons.some((person) => person.name === newContact.name)) {
-      window.alert(`${newName} is already added to the phonebook`);
-    } else {
       personsServices
       .add(newContact)
-      .then(returnContact => setPersons(persons.concat(returnContact)))
-    }
-    setNewName("");
-    setNewNumber("");
+      .then(returnContact => {
+        setPersons(persons.concat(returnContact))
+        if(notificationID !== null){
+          clearTimeout(notificationID)
+        }
+        setNotificationMessage(`Added ${returnContact.name} to the contact list`)
+        setNotificationClass("success")
+        setNotificationID(setTimeout(() => {
+          setNotificationMessage(null)
+          setNotificationID(null)
+          setNotificationClass(null)
+        }, 5000))
+        setNewName("");
+        setNewNumber("");
+    })
+        
   };
 
   const updateContact = (contactToUpdate) => {
@@ -48,6 +60,19 @@ const App = () => {
     .update(updatedContact, contactToUpdate.id)
     .then(response => {
       setPersons(persons.map(contact => contact.id !== contactToUpdate.id ? contact : response))
+    })
+    .catch(error => {
+      if(notificationID !== null){
+        clearTimeout(notificationID)
+      }
+      setNotificationMessage(`El contacto ${contactToUpdate.name} ya ha sido borrado`)
+      setNotificationClass("error")
+      setNotificationID(setTimeout(() => {
+        setNotificationMessage(null)
+        setNotificationID(null)
+        setNotificationClass(null)
+      }, 5000))
+      setPersons(persons.filter(contact => contact.id !== contactToUpdate.id))
     })
   }
 
@@ -95,6 +120,7 @@ const App = () => {
   return (
     <div>
       <h1>Phonebook</h1>
+      <Notification message={notificationMessage} notificationClass={notificationClass} />
       <Filter filterText={filterText} handleFilter={handleFilter} />
 
       <AddContact newName={newName} handleNameChange={handleNameChange} newNumber={newNumber} handleNumberChange={handleNumberChange} handleNewContacts={handleNewContacts}/>
