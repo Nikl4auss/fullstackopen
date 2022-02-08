@@ -8,7 +8,7 @@
     "dev": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "build:ui": "rm -rf build && cd ../../part2/notes/ && npm run build && cp -r build ../../part3/notesbackend",
-    "deploy": "git push heroku master",
+    "deploy": "git commit -am uibuild && git push heroku master",
     "deploy:full": "npm run build:ui && cd ../.. && git add . && git commit -m uibuild && git push && cd part3/notesbackend && npm run deploy"
   },
   "keywords": [],
