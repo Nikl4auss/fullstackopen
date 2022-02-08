@@ -8,8 +8,8 @@
     "dev": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "build:ui": "rm -rf build && cd ../../part2/notes/ && npm run build && cp -r build ../../part3/notesbackend",
-    "deploy": "git commit -am uibuild && git push heroku master",
-    "deploy:full": "npm run build:ui && cd ../.. && git add . && git commit -m uibuild && git push && cd part3/notesbackend && npm run deploy"
+    "deploy": "git push heroku master",
+    "deploy:full": "npm run build:ui && git add . && git commit -m uibuild && npm run deploy"
   },
   "keywords": [],
   "author": "Nicolas Marinelli",
