@@ -7,7 +7,8 @@
     "start": "node index.js",
     "dev": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build:ui": "rm -rf build && cd ../../part2/phonebook/ && npm run build && cp -r build ../../part3/phonebookbackend"
+    "build:ui": "rm -rf build && cd ../../part2/phonebook/ && npm run build && cp -r build ../../part3/phonebookbackend",
+    "lint": "eslint . --fix"
   },
   "keywords": [],
   "author": "",
@@ -21,6 +22,18 @@
     "morgan": "^1.10.0"
   },
   "devDependencies": {
-    "nodemon": "^2.0.15"
+    "eslint": "^8.10.0",
+    "eslint-config-airbnb": "^19.0.4",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-node": "^4.1.0",
+    "eslint-config-prettier": "^8.4.0",
+    "eslint-plugin-import": "^2.25.4",
+    "eslint-plugin-jsx-a11y": "^6.5.1",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-react": "^7.29.2",
+    "eslint-plugin-react-hooks": "^4.3.0",
+    "nodemon": "^2.0.15",
+    "prettier": "^2.5.1"
   }
 }
