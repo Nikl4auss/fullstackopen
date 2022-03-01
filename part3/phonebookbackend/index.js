@@ -35,11 +35,9 @@ app.get("/api/contacts/:id", (request, response, next) => {
     .catch((error) => next(error));
 });
 
-app.post("/api/contacts", (request, response) => {
+app.post("/api/contacts", (request, response, next) => {
   const body = request.body;
   const { name, number } = body;
-  if (!name || !number)
-    return response.status(400).error({ error: "name or number missing" });
 
   const contact = new Contact({
     name,
@@ -48,20 +46,25 @@ app.post("/api/contacts", (request, response) => {
     lastUpdateDate: new Date(),
   });
 
-  contact.save().then((savedContact) => response.json(savedContact));
+  contact
+    .save()
+    .then((savedContact) => response.json(savedContact))
+    .catch((error) => next(error));
 });
 
 app.put("/api/contacts/:id", (request, response, next) => {
   const body = request.body;
   const { name, number } = body;
-  if (!name || !number)
-    return response.status(400).error({ error: "name or number missing" });
   const contact = {
     name,
     number,
     lastUpdateDate: new Date(),
   };
-  Contact.findByIdAndUpdate(request.params.id, contact, { new: true })
+  Contact.findByIdAndUpdate(request.params.id, contact, {
+    new: true,
+    runValidators: true,
+    context: "query",
+  })
     .then((contactUpdated) => response.json(contactUpdated))
     .catch((error) => next(error));
 });
@@ -81,11 +84,16 @@ app.use(unknownEndpoint);
 const errorHandler = (error, request, response, next) => {
   console.error(error.message);
 
-  if (error.message === "CastError")
+  if (error.name === "CastError")
     return response.status(400).send({ error: "malformatted id" });
+  if (error.name === "ValidationError") {
+    return response.status(400).json({ error: error.message });
+  }
 
   next(error);
 };
+
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
