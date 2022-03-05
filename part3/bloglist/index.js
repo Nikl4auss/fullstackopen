@@ -1,20 +1,10 @@
-require('dotenv').config()
+const app = require('./app')
 const http = require('http')
-const express = require('express')
-const app = express()
-const cors = require('cors')
-const mongoose = require('mongoose')
-const blogsRouter = require('./controllers/blogs')
+const config = require('./utils/config')
 
-const mongoUrl = process.env.MONGODB_URI
-mongoose.connect(mongoUrl)
+const server = http.createServer(app)
 
-app.use(cors())
-app.use(express.json())
 
-app.use('/api/blogs', blogsRouter)
-
-const PORT = process.env.PORT || 3003
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`)
+server.listen(config.PORT, () => {
+  console.log(`Server running on port ${config.PORT}`)
 })
