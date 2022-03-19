@@ -8,6 +8,7 @@ const Country = ({showButton, country}) => {
     const [weather, setWeather] = useState({})
 useEffect(() => {
     const fetchData = async () => {
+        console.log(api_key)
         const response = await axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${country.capital}&units=metric&appid=${api_key}`)
         console.log(response.data)
         setWeather(response.data)
@@ -37,6 +38,7 @@ useEffect(() => {
                             <h2>Wather in {country.capital}</h2>
                             <p><strong>temperature:</strong> {weather.main.temp} celcius</p>
                             <p><strong>Wind:</strong> {weather.wind.speed} mph</p>
+                            <img src={`http://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png`} alt="" />
                         </>
                     )
                     : <p>Weather not avaible for this country</p>
