@@ -27,6 +27,10 @@ test('at the start, there should be 4 blogs', async () => {
     expect(response.body).toHaveLength(helper.initialBlogs.length)
 })
 
+test('when returned as JSON, blogs should have the id property', async () => {
+    const blogs = await helper.blogsInDB()
+    expect(blogs[0].id).toBeDefined()
+})
 afterAll(() => {
     mongoose.connection.close()
 })
