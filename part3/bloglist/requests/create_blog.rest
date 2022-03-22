@@ -4,6 +4,5 @@ Content-Type: application/json
 {
     "title": "Wired",
     "author": "Louis Rossetto",
-    "url": "https://www.wired.com/",
-    "likes": 0
+    "url": "https://www.wired.com/"
 }

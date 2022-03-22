@@ -53,6 +53,39 @@ describe('POST request', () => {
         const blogsAtEnd = await helper.blogsInDB()
         expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1)
     })
+
+    test('if likes is missing, it defaults to 0', async () => {
+        const newBlog = {
+            title: "Something something blog",
+            author: "Someone",
+            url: "https://dontclickthislink.com/",
+        }
+
+        await api
+        .post('/api/blogs')
+        .send(newBlog)
+        .expect(201)
+        .expect('Content-Type', /application\/json/)
+
+        const blogsAtEnd = await helper.blogsInDB()
+        console.log(blogsAtEnd[blogsAtEnd.length - 1])
+        expect(blogsAtEnd[blogsAtEnd.length - 1].likes).toBe(0)
+    })
+
+    test('if title or url are missing, the request is responded with 400', async () => {
+        const newBlog = {
+            author: "Someone",
+            url: "https://dontclickthislink.com/",
+        }
+
+        await api
+        .post('/api/blogs')
+        .send(newBlog)
+        .expect(400)
+
+        const blogsAtEnd = await helper.blogsInDB()
+        expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
+    })
 });
 afterAll(() => {
     mongoose.connection.close()
