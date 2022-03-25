@@ -87,6 +87,35 @@ describe('POST request', () => {
         expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
     })
 });
+
+describe('DELETE', () => {
+    test('When an existing blog is deleted it should respond with status code 204', async () => {
+        const blogsAtStart = await helper.blogsInDB()
+        const id = blogsAtStart[blogsAtStart.length - 1].id
+        await api
+        .delete(`/api/blogs/${id}`)
+        .expect(204)
+
+        const blogsAtEnd = await helper.blogsInDB()
+
+        expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length - 1)
+    })
+})
+
+describe('PUT', () => {
+    test('An existing blog can be updated', async () => {
+        const blogsAtStart = await helper.blogsInDB()
+        const blogToUpdate = blogsAtStart[0]
+        await api
+        .put(`/api/blogs/${blogToUpdate.id}`)
+        .send({...blogToUpdate, likes: 10})
+        .expect(200)
+        .expect('Content-Type', /application\/json/)
+
+        const blogsAtEnd = await helper.blogsInDB()
+        expect(blogsAtEnd[0]).toEqual({...blogToUpdate, likes: 10})
+    })
+})
 afterAll(() => {
     mongoose.connection.close()
 })
