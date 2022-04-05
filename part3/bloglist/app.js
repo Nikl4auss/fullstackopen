@@ -4,6 +4,7 @@ require('express-async-errors')
 const cors = require('cors')
 const blogsRouter = require('./controllers/blogs')
 const mongoose = require('mongoose')
+const usersRouter = require('./controllers/users')
 
 const app = express()
 
@@ -14,7 +15,7 @@ app.use(cors())
 app.use(express.json())
 
 app.use('/api/blogs', blogsRouter)
-
+app.use('/api/users', usersRouter)
 const errorHandler = (error, request, response, next) => {
   
     if (error.name === 'CastError') {
