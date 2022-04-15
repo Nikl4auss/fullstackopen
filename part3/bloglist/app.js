@@ -5,7 +5,10 @@ const cors = require('cors')
 const blogsRouter = require('./controllers/blogs')
 const mongoose = require('mongoose')
 const usersRouter = require('./controllers/users')
-
+const loginRouter = require('./controllers/login')
+const errorHandler = require('./utils/middleware/errorHandler')
+const unknownEndpoint = require('./utils/middleware/unknownEndpoint')
+const usersReturner = require('./utils/middleware/userReturner')
 const app = express()
 
 const mongoUrl = config.MONGODB_URI
@@ -14,18 +17,11 @@ mongoose.connect(mongoUrl)
 app.use(cors())
 app.use(express.json())
 
-app.use('/api/blogs', blogsRouter)
+app.use('/api/blogs', usersReturner ,blogsRouter)
 app.use('/api/users', usersRouter)
-const errorHandler = (error, request, response, next) => {
-  
-    if (error.name === 'CastError') {
-      return response.status(400).send({ error: 'malformatted id' })
-    } else if (error.name === 'ValidationError') {
-      return response.status(400).json({ error: error.message })
-    }
-  
-    next(error)
-  }
+app.use('/api/login', loginRouter)
 
-  app.use(errorHandler)
+app.use(unknownEndpoint)
+app.use(errorHandler)
+
 module.exports = app

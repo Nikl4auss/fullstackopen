@@ -31,6 +31,7 @@ notesRouter.post('/', userReturner , async (request, response) => {
 
   const savedNote = await note.save()
   user.notes = user.notes.concat(savedNote._id)
+  console.log(user.notes)
   await user.save()
   response.status(201).json(savedNote)
 

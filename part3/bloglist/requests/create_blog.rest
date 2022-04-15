@@ -1,5 +1,6 @@
 POST http://localhost:3003/api/blogs
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im5pa2w0YXVzcyIsImlkIjoiNjI0YzM4YWY2YjEzOWEwNWFiNTMzMGQyIiwiaWF0IjoxNjQ5NDY1ODk4fQ.dOwZ9mSZwsN-zjaUkHuKt-azKSyOnuacyjAbP4ihwmw
 
 {
     "title": "Wired",
